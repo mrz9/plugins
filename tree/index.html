@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- link form ul -->
+    <link rel="stylesheet" href="http://systemmanage.cc/admin/static/css/bootstrap.min14ed.css">
+    <link rel="stylesheet" href="http://systemmanage.cc/admin/static/css/font-awesome.min93e3.css">
+    <link rel="stylesheet" href="http://systemmanage.cc/admin/static/css/main.css">
+    <script src="http://systemmanage.cc/admin/static/js/jquery.min.js"></script>
+    <script src="http://systemmanage.cc/admin/static/js/bootstrap.min.js?v=3.3.6"></script>
+    <!-- end ui -->
+
+    <link rel="stylesheet" href="tree.css">
+    <script src="tree.js"></script>
+    <title>无限级树插件</title>
+</head>
+<body>
+    
+
+    <!--组织等级弹窗 -->
+<div class="tree-popup">
+    <div class="popup-main row">
+        <div class="col-sm-12">
+            <div class="search-bar">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="搜索部门、岗位、人员">
+                        <span class="input-group-btn"> <button type="button" class="btn btn-success">搜索</button> </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 level-origin ">
+            <h5 class="stitle">未选择</h5>
+            <div class="level-scroll">
+                <div class="checkbox all">
+                    <label>
+                        <input type="checkbox" @change="allChange" v-model="isAll"> 全部
+                    </label>
+                </div>
+                <ul class="list-unstyled">
+                    <li v-for="item in origin">
+                        <div class="checkbox clearfix">
+                            <label>
+                                <input type="checkbox" @change="levelAll(item)" v-model="item.checked"> {{item.name}} 
+                            </label>
+                            <span @click="item.show = !item.show" class="has-child">下级</span>
+                        </div>
+                        <dl v-if="level.length" :class="{'show':item.show}">
+                            <dd v-for="litem in level">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" :value="litem.id" @change="levelChange(litem,item)" v-model="item.level"> {{litem.name}}
+                                    </label>
+                                </div>
+                            </dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div><!-- end level-scroll -->
+        </div><!-- end level-origin -->
+        <div class="col-sm-6 level-selected">
+            <h5 class="stitle">已选择</h5>
+            <div class="level-scroll">
+                <ul class="list-unstyled">
+                    <template v-if="isAll">
+                        <li><span>全部机构的等级</span> <a href="javascript:void(0);" @click="removeAll" class="close"><span aria-hidden="true">&times;</span></a></li>
+                    </template>
+                    <template v-else  v-for="item in origin">
+                        <li v-if="item.checked">
+                            <span>{{item.name}} 全部等级</span>
+                            <a href="javascript:void(0);" @click="removeItem(item,-1)" class="close"><i class="fa fa-close"></i></a>
+                        </li>
+                        <li v-else-if="item.level" v-for="(id,key) in item.level">
+                            <span>{{item.name}}</span>
+                            <span>{{getLevelName(id)}} 等级</span>
+                            <a href="javascript:void(0);" @click="removeItem(item,key)" class="close"><i class="fa fa-close"></i></a>
+                        </li>
+                    </template>
+                </ul>
+            </div><!-- end level-scroll -->
+        </div><!-- end level-selected -->
+    </div><!-- end popup-main -->
+</div><!-- end org-level-popup -->
+
+</body>
+</html>
